@@ -1,19 +1,42 @@
-import { Car } from "../models/car"
+import { CollectionReference } from "firebase-admin/firestore";
+import { connectDb } from "../connectDb";
+import { Car } from "../models/car";
 
 interface CarService {
 
-    addNewCar(car: Car): Car;
-    getAllCars(): Car[];
+    addNewCar(car: Car): Promise<Car>;
+    getAllCars(): Promise<Car[] | null>;
     getCarById(carId: string): Car;
 }
 
-const getAllCars = (): Car[] => {
-    const cars: Car[] = [];
-    const car1: Car = {make: "Ford", model:"Fiesta", year: 2022, }
-    const car2 = { make:"Ford", model: "F-150" } as Car
+const carCollection = connectDb().collection('car') as CollectionReference<Car>;
 
-    cars.push(car1, car2)
+const getAllCars = async (): Promise<Car[] | null> => {
+    // const cars: Car[] = [];
+    // const car1: Car = {make: "Ford", model:"Fiesta", year: 2022, }
+    // const car2 = { make:"Ford", model: "F-150" } as Car
 
-    return cars;
+    // cars.push(car1, car2)
+    try {
+        const result = await carCollection.get()
+        const cars = result.docs.map(doc => {
+            const car: Car = doc.data()
+            car.id = doc.id;
+        return car;
+        })
+        return cars
+    } catch (error) {
+        return null;
+    }
+
 }
-export const  carService: CarService = { getAllCars } as CarService
+
+    const addNewCar = async (car: Car): Promise<Car> => {
+        const result = await carCollection.add(car)
+
+        car.id = result.id
+
+        return car;
+    }
+
+export const  carService: CarService = { getAllCars, addNewCar } as CarService

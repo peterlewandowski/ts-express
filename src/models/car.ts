@@ -6,5 +6,5 @@ export interface Car {
     price?: number;
     isElectric?: boolean;
     used?: boolean;
-    vin?: string;
+    id?: string;
 }
