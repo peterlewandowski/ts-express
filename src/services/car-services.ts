@@ -31,12 +31,12 @@ const getAllCars = async (): Promise<Car[] | null> => {
 
 }
 
-    const addNewCar = async (car: Car): Promise<Car> => {
-        const result = await carCollection.add(car)
+const addNewCar = async (car: Car): Promise<Car> => {
+    const result = await carCollection.add(car)
 
-        car.id = result.id
+    car.id = result.id
 
-        return car;
-    }
+    return car;
+}
 
 export const  carService: CarService = { getAllCars, addNewCar } as CarService

@@ -6,7 +6,7 @@ const app = express()
 
 app.use(express.json())
 
-app.all('/cars', async (req: Request, res:Response) => {
+app.get('/cars', async (req: Request, res:Response) => {
     const result = await carService.getAllCars()
 
     if(!result){
@@ -21,8 +21,13 @@ app.post("/cars", async (req: Request, res: Response) => {
     
     const car: Car = {make, model, year}
 
+try {
     const result = await carService.addNewCar(car)
     car.id = result.id;
+
+} catch(error) {
+    res.status(500).send("Something went wrong")
+}
 
     res.status(201).json(car)
 })
